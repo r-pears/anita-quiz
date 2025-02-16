@@ -1,4 +1,5 @@
-const url = "https://opentdb.com/api.php?amount=10";
+// can hardcode the url in the fetchQuestion function, or if its declared here should be in capital letters
+const URL = "https://opentdb.com/api.php?amount=10";
 let currentQuestionIdx = 0;
 let finalScore = 0;
 let response;
@@ -9,7 +10,7 @@ async function fetchQuestion(url) {
       throw new Error(`Response status: ${response.status}`);
     }
     fetchedData = await response.json();
-    console.log(fetchedData);
+    // remove the console.log from production code
     return fetchedData;
   } catch (error) {
     console.error(error.message);
@@ -17,7 +18,7 @@ async function fetchQuestion(url) {
 }
 playGame();
 function playGame() {
-  fetchQuestion(url).then((fetchedData) => {
+  fetchQuestion(URL).then((fetchedData) => {
     response = fetchedData;
     let optionsList = document.getElementById("options_list");
     optionsList.addEventListener("click", (e) => {
@@ -83,9 +84,8 @@ function playGame() {
     }
     document.querySelector("#answer").innerHTML =
       currentQuestionObj.correct_answer;
-    
-    
-      let correctAnswer = currentQuestionObj.correct_answer;
+
+    let correctAnswer = currentQuestionObj.correct_answer;
     optionArray.push(correctAnswer);
     console.log(optionArray);
   }

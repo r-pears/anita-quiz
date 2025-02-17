@@ -20,14 +20,18 @@ function playGame() {
   fetchQuestion(url).then((fetchedData) => {
     response = fetchedData;
     let optionsList = document.getElementById("options_list");
+    let nextButton = document.getElementById("nextBtn");
+
+    nextButton.disabled = true;
     optionsList.addEventListener("click", (e) => {
       if (e.target.nodeName == "LI") {
         let popUp = document.getElementById("notification");
-        if (
-          e.target.innerHTML === document.querySelector("#answer").innerHTML
-        ) {
+        nextButton.disabled = false;
+        if (e.target.getAttribute("data-correct") === "true") {
           setGreenNotification();
           function setGreenNotification() {
+            popUp.innerHTML = "Your answer is correct";
+            popUp.style.background = "green";
             popUp.style.visibility = "visible";
             document.querySelectorAll(".circle")[
               currentQuestionIdx
@@ -68,29 +72,27 @@ function playGame() {
 
   function renderCurrentQuestion(fetchedData) {
     let currentQuestionObj = fetchedData.results[currentQuestionIdx];
+    let nextButton = document.getElementById("nextBtn");
+    nextButton.disabled = true;
 
     document.querySelector(".questionContainer").innerHTML =
       currentQuestionObj.question;
-    let optionArray = [];
-    for (let optionIdx = 0; optionIdx < 3; optionIdx++) {
-      document.getElementsByClassName("option")[optionIdx].innerHTML =
-        currentQuestionObj.incorrect_answers[optionIdx];
-
-      let optionValue = optionArray.push(
-        currentQuestionObj.incorrect_answers[optionIdx]
+    let incorrectAnswers = [...currentQuestionObj.incorrect_answers];
+    let correctAnswer = currentQuestionObj.correct_answer;
+    let randomIndex = Math.floor(Math.random() * 4);
+    incorrectAnswers.splice(randomIndex, 0, correctAnswer);
+    let options = document.getElementsByClassName("option");
+    for (let i = 0; i < incorrectAnswers.length; i++) {
+      options[i].innerHTML = incorrectAnswers[i];
+      options[i].setAttribute(
+        "data-correct",
+        incorrectAnswers[i] === correctAnswer
       );
-      console.log(optionValue);
     }
-    document.querySelector("#answer").innerHTML =
-      currentQuestionObj.correct_answer;
-    
-    
-      let correctAnswer = currentQuestionObj.correct_answer;
-    optionArray.push(correctAnswer);
-    console.log(optionArray);
   }
   document.getElementById("nextBtn").addEventListener("click", () => {
-    currentQuestionIdx = currentQuestionIdx + 1;
+    if (!document.querySelector(".option.disabled")) return;
+    currentQuestionIdx++;
     renderCurrentQuestion(response);
     let popUp = document.getElementById("notification");
     popUp.style.visibility = "hidden";

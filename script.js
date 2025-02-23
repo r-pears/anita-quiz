@@ -2,6 +2,7 @@ const url = "https://opentdb.com/api.php?amount=10";
 let currentQuestionIdx = 0;
 let finalScore = 0;
 let response;
+// random comment for git
 async function fetchQuestion(url) {
   try {
     const response = await fetch(url);
